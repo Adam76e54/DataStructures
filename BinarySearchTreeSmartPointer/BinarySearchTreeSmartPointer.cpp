@@ -8,6 +8,54 @@
 
 template <typename T>
 class BinaryTree{
+
+public:
+  constexpr BinaryTree() noexcept = default;//root_'s default will be called to initialise it to nullptr
+
+
+  //move and copy insertion (facilitates T being a large object)
+  void insert(T&& data){
+    //taking advantage of T's possible move constructor
+    insert(root_, std::forward<T>(data));
+  }
+
+
+  template<typename Function>
+  void inorder(Function&& process){
+    inorder(root_, std::forward<Function>(process));
+  }
+
+
+
+
+  void preorder(std::function<void(T&)>& process){
+    preorder(root_, process);
+  }
+ 
+ 
+  void postorder(void (*process)(T&)){
+    postorder(root_, process);
+  }
+
+
+  bool contains(const T& key){
+    auto node = root_.get();
+    while(node){
+      //CASE 1: key is found
+      if(key == node->payload_){
+        return true;
+      }
+      //CASE 2: node < target ==> go left
+      else if(key < node->payload_){
+        node = node->left_.get();
+      }
+      //CASE 3: node > target ==> go right
+      else{
+        node = node->right_.get();
+      }
+    }
+    return false;
+  }
 private:
   struct Node{
     T payload_;
@@ -72,54 +120,5 @@ private:
       postorder(node->right_, process);
       process(node->payload_);
     }
-  }
-
-
-public:
-  constexpr BinaryTree() noexcept = default;//root_'s default will be called to initialise it to nullptr
-
-
-  //move and copy insertion (facilitates T being a large object)
-  void insert(T&& data){
-    //taking advantage of T's possible move constructor
-    insert(root_, std::forward<T>(data));
-  }
-
-
-  template<typename Function>
-  void inorder(Function&& process){
-    inorder(root_, std::forward<Function>(process));
-  }
-
-
-
-
-  void preorder(std::function<void(T&)>& process){
-    preorder(root_, process);
-  }
- 
- 
-  void postorder(void (*process)(T&)){
-    postorder(root_, process);
-  }
-
-
-  bool contains(const T& key){
-    auto node = root_.get();
-    while(node){
-      //CASE 1: key is found
-      if(key == node->payload_){
-        return true;
-      }
-      //CASE 2: node < target ==> go left
-      else if(key < node->payload_){
-        node = node->left_.get();
-      }
-      //CASE 3: node > target ==> go right
-      else{
-        node = node->right_.get();
-      }
-    }
-    return false;
   }
 };
