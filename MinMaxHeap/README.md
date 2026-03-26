@@ -1,4 +1,4 @@
-\#Double-Ended Priority Queue
+\# Double-Ended Priority Queue
 
 
 
